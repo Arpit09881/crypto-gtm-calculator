@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GTM Reality Check - How Much is Your Web3 GTM Really Costing?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Find out how much money you're wasting on dead partnerships. The brutal truth about your Web3 GTM efficiency.">
+    <meta property="og:title" content="GTM Reality Check - Web3 Partnership Calculator">
+    <meta property="og:description" content="I just found out I'm wasting $XXX,XXX on dead partnerships. Check your GTM efficiency.">
+    <meta property="og:image" content="https://yourdomain.github.io/gtm-calculator/preview.png">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #fafbfc;
+            color: #1a1a1a;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Clean background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Header section */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        h1 {
+            font-size: 3.5em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.3em;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        
+        .warning-text {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        /* Form styling */
+        #calculator {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+        
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin: 30px 0 20px 0;
+            color: #3b82f6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title:first-child {
+            margin-top: 0;
+        }
+        
+        .question {
+            margin: 20px 0;
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 0.95em;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            background: #f9fafb;
+            color: #1a1a1a;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        
+        input::placeholder {
+            color: #9ca3af;
+        }
+        
+        .input-help {
+            font-size: 0.85em;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        
+        /* Calculate button */
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Results section */
+        #results {
+            display: none;
+            margin-top: 60px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .results-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+        
+        .results-header p {
+            color: #6b7280;
+        }
+        
+        /* Result cards */
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .result-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-emoji {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .result-label {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: #ef4444;
+            margin-bottom: 10px;
+        }
+        
+        .result-description {
+            font-size: 0.85em;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+        
+        /* Warning box */
+        .warning-box {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .warning-box h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ef4444;
+        }
+        
+        .warning-box p {
+            color: #991b1b;
+        }
+        
+        /* Comparison box */
+        .comparison-box {
+            background: #f0f9ff;
+            border: 2px solid #3b82f6;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .comparison-box h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #3b82f6;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .comparison-item {
+            text-align: center;
+        }
+        
+        .comparison-label {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        
+        .comparison-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        
+        /* How we calculate */
+        .calculation-explainer {
+            background: #f3f4f6;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .calculation-explainer h3 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+        
+        .formula {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            font-size: 0.9em;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+        
+        /* Email capture */
+        #emailCapture {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.03) 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 60px;
+            text-align: center;
+        }
+        
+        #emailCapture h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+        
+        #emailCapture p {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+        
+        .email-form {
+            display: flex;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        #email {
+            flex: 1;
+        }
+        
+        .email-btn {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .email-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        /* Share section */
+        .share-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .share-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 10px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #374151;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            background: #f3f4f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Success message */
+        .success-message {
+            background: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5em; }
+            .container { padding: 20px; }
+            #calculator { padding: 25px; }
+            .email-form { flex-direction: column; }
+            .result-value { font-size: 1.8em; }
+            .comparison-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GTM Reality Check</h1>
+            <p class="subtitle">How much is your Web3 GTM really costing you?</p>
+            <p class="warning-text">⚠️ Warning: Results might hurt</p>
+        </div>
+        
+        <form id="calculator">
+            <div class="section-title">👥 Team Size</div>
+            
+            <div class="question">
+                <label for="bdTeam">BD/Partnership team size</label>
+                <div class="input-wrapper">
+                    <input type="number" id="bdTeam" placeholder="5" min="0" required>
+                    <div class="input-help">Include all partnership, ecosystem, and BD roles</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <label for="marketingTeam">Marketing team size</label>
+                <div class="input-wrapper">
+                    <input type="number" id="marketingTeam" placeholder="3" min="0" required>
+                    <div class="input-help">Include growth, community, content marketing</div>
+                </div>
+            </div>
+            
+            <div class="section-title">💰 Compensation</div>
+            
+            <div class="question">
+                <label for="avgSalary">Average annual salary per team member</label>
+                <div class="input-wrapper">
+                    <input type="number" id="avgSalary" placeholder="125000" min="0" required>
+                    <div class="input-help">Base salary only, exclude equity/tokens</div>
+                </div>
+            </div>
+            
+            <div class="section-title">📊 Activity & Results</div>
+            
+            <div class="question">
+                <label for="activeDiscussions">Active partnership discussions</label>
+                <div class="input-wrapper">
+                    <input type="number" id="activeDiscussions" placeholder="200" min="0" required>
+                    <div class="input-help">All those Telegram groups, calls, "exploring synergies" convos</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <label for="announced">Partnerships announced (last 12 months)</label>
+                <div class="input-wrapper">
+                    <input type="number" id="announced" placeholder="50" min="0" required>
+                    <div class="input-help">The ones you tweeted about with 🤝 emojis</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <label for="live">Partnerships actually integrated & live</label>
+                <div class="input-wrapper">
+                    <input type="number" id="live" placeholder="5" min="0" required>
+                    <div class="input-help">Be honest - only count ones with real activity</div>
+                </div>
+            </div>
+            
+            <button type="submit" class="calculate-btn">Show Me The Truth →</button>
+        </form>
+        
+        <div id="results">
+            <div class="results-header">
+                <h2 class="results-title">💀 Your GTM Reality</h2>
+                <p>Brace yourself for the truth about your partnership efficiency</p>
+            </div>
+            
+            <div class="result-grid">
+                <div class="result-card">
+                    <div class="result-emoji">💸</div>
+                    <div class="result-label">Annual GTM Burn</div>
+                    <div class="result-value" id="annualBurn">$0</div>
+                    <div class="result-description">Total cost of your GTM team</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-emoji">💰</div>
+                    <div class="result-label">Cost per ACTIVE Partnership</div>
+                    <div class="result-value" id="costPerActive">$0</div>
+                    <div class="result-description">What you really pay for each live integration</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-emoji">📊</div>
+                    <div class="result-label">Activation Rate</div>
+                    <div class="result-value" id="activationRate">0%</div>
+                    <div class="result-description">Percentage of partnerships that go live</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-emoji">🗑️</div>
+                    <div class="result-label">Annual Waste</div>
+                    <div class="result-value" id="waste">$0</div>
+                    <div class="result-description">Money spent on dead partnerships</div>
+                </div>
+            </div>
+            
+            <div class="warning-box" id="warningBox">
+                <h3 id="warningTitle">Warning Title</h3>
+                <p id="warningMessage">Warning message will appear here</p>
+            </div>
+            
+            <div class="comparison-box">
+                <h3>📊 How You Compare</h3>
+                <p>Industry benchmarks vs. your performance</p>
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <div class="comparison-label">Industry Avg Activation Rate</div>
+                        <div class="comparison-value">35%</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">Your Activation Rate</div>
+                        <div class="comparison-value" id="yourRate">0%</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">Industry Avg Cost/Partnership</div>
+                        <div class="comparison-value">$50K</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">Your Cost/Partnership</div>
+                        <div class="comparison-value" id="yourCost">$0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="calculation-explainer">
+                <h3>🧮 How We Calculate This</h3>
+                <p>We use simple math to reveal the brutal truth about your GTM efficiency:</p>
+                
+                <div class="formula">
+                    <strong>Annual GTM Burn</strong> = (BD Team + Marketing Team) × Average Salary
+                </div>
+                
+                <div class="formula">
+                    <strong>Cost per Active Partnership</strong> = Annual GTM Burn ÷ Live Partnerships
+                </div>
+                
+                <div class="formula">
+                    <strong>Activation Rate</strong> = (Live Partnerships ÷ Announced Partnerships) × 100
+                </div>
+                
+                <div class="formula">
+                    <strong>Annual Waste</strong> = Annual GTM Burn × (1 - Activation Rate)
+                </div>
+                
+                <p style="margin-top: 20px; color: #999;">
+                    These calculations assume your GTM team's primary focus is partnerships. 
+                    Real waste might be even higher when including events, tools, and travel.
+                </p>
+            </div>
+            
+            <div id="emailCapture">
+                <h3>Want to Fix This?</h3>
+                <p>Get your detailed GTM efficiency report with specific recommendations</p>
+                <form class="email-form" onsubmit="captureEmail(event)">
+                    <input type="email" id="email" placeholder="your@email.com" required>
+                    <button type="submit" class="email-btn">Get Report</button>
+                </form>
+                <div id="successMessage" class="success-message">
+                    ✅ Success! Check your email for your detailed report.
+                </div>
+            </div>
+            
+            <div class="share-section">
+                <p style="margin-bottom: 20px; color: #999;">Share your reality check:</p>
+                <a href="#" onclick="shareTwitter()" class="share-btn">Share on Twitter</a>
+                <a href="#" onclick="shareLinkedIn()" class="share-btn">Share on LinkedIn</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store results globally for sharing
+        let currentResults = {};
+        
+        document.getElementById('calculator').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculate();
+        });
+        
+        function calculate() {
+            // Get values
+            const bdTeam = parseInt(document.getElementById('bdTeam').value) || 0;
+            const marketingTeam = parseInt(document.getElementById('marketingTeam').value) || 0;
+            const avgSalary = parseInt(document.getElementById('avgSalary').value) || 0;
+            const activeDiscussions = parseInt(document.getElementById('activeDiscussions').value) || 0;
+            const announced = parseInt(document.getElementById('announced').value) || 0;
+            const live = parseInt(document.getElementById('live').value) || 0;
+            
+            // Calculate
+            const totalTeam = bdTeam + marketingTeam;
+            const annualBurn = totalTeam * avgSalary;
+            const costPerActive = live > 0 ? Math.round(annualBurn / live) : 0;
+            const activationRate = announced > 0 ? Math.round((live / announced) * 100) : 0;
+            const deadPartnerships = announced - live;
+            const waste = Math.round((deadPartnerships / announced) * annualBurn) || 0;
+            
+            // Store results
+            currentResults = {
+                annualBurn,
+                costPerActive,
+                activationRate,
+                waste,
+                bdTeam,
+                marketingTeam,
+                avgSalary,
+                activeDiscussions,
+                announced,
+                live,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Display results
+            document.getElementById('annualBurn').textContent = '$' + annualBurn.toLocaleString();
+            document.getElementById('costPerActive').textContent = live > 0 ? '$' + costPerActive.toLocaleString() : 'N/A';
+            document.getElementById('activationRate').textContent = activationRate + '%';
+            document.getElementById('waste').textContent = '$' + waste.toLocaleString();
+            
+            // Update comparison
+            document.getElementById('yourRate').textContent = activationRate + '%';
+            document.getElementById('yourCost').textContent = live > 0 ? '$' + Math.round(costPerActive/1000) + 'K' : 'N/A';
+            
+            // Color code the comparison values
+            if (activationRate >= 35) {
+                document.getElementById('yourRate').style.color = '#10b981';
+            } else {
+                document.getElementById('yourRate').style.color = '#ef4444';
+            }
+            
+            if (costPerActive <= 50000) {
+                document.getElementById('yourCost').style.color = '#10b981';
+            } else {
+                document.getElementById('yourCost').style.color = '#ef4444';
+            }
+            
+            // Warning message
+            let warningTitle = '';
+            let warningMessage = '';
+            
+            if (costPerActive > 300000) {
+                warningTitle = '🚨 EMERGENCY ALERT';
+                warningMessage = `Each partnership is costing you $${costPerActive.toLocaleString()} - more than hiring 2 senior engineers! Your GTM is hemorrhaging money.`;
+            } else if (costPerActive > 150000) {
+                warningTitle = '⚠️ MAJOR INEFFICIENCY';
+                warningMessage = `You're spending $${costPerActive.toLocaleString()} per partnership - that's 3x the industry benchmark. Time for a complete GTM overhaul.`;
+            } else if (activationRate < 20) {
+                warningTitle = '💀 PARTNERSHIP GRAVEYARD';
+                warningMessage = `${100 - activationRate}% of your partnerships are zombies. You're running a partnership announcement factory, not a business development team.`;
+            } else if (activationRate < 50) {
+                warningTitle = '📉 FAILING EFFICIENCY';
+                warningMessage = `Over half your announced partnerships never go live. You're wasting $${waste.toLocaleString()} annually on dead deals.`;
+            } else {
+                warningTitle = '✅ ROOM FOR IMPROVEMENT';
+                warningMessage = 'Your GTM efficiency is better than most, but there\'s still opportunity to optimize and reduce waste.';
+            }
+            
+            document.getElementById('warningTitle').textContent = warningTitle;
+            document.getElementById('warningMessage').textContent = warningMessage;
+            
+            // Show results
+            document.getElementById('calculator').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            // Smooth scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+            
+            // Send data to webhook
+            sendToWebhook(currentResults);
+        }
+        
+        function captureEmail(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            if (email) {
+                // Add email to results
+                currentResults.email = email;
+                
+                // Send to webhook with email
+                sendToWebhook(currentResults);
+                
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                document.querySelector('.email-form').style.display = 'none';
+                
+                // Optional: Hide form after submission
+                setTimeout(() => {
+                    document.getElementById('emailCapture').innerHTML = `
+                        <h3>✅ Check Your Email!</h3>
+                        <p>We've sent your detailed GTM efficiency report to ${email}</p>
+                        <p style="margin-top: 20px; color: #666;">Spoiler: You're probably wasting even more than our calculator shows.</p>
+                    `;
+                }, 2000);
+            }
+        }
+        
+        function shareTwitter() {
+            const text = `Just discovered I'm wasting $${currentResults.waste.toLocaleString()} annually on dead partnerships. 
+            
+My GTM efficiency score: ${currentResults.activationRate}%
+Cost per ACTIVE partnership: $${currentResults.costPerActive.toLocaleString()}
+
+Check your GTM reality: [YOUR_GITHUB_URL]`;
+            
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareLinkedIn() {
+            const text = `Eye-opening GTM Reality Check:
+            
+Annual GTM Burn: $${currentResults.annualBurn.toLocaleString()}
+Partnership Activation Rate: ${currentResults.activationRate}%
+Annual Waste: $${currentResults.waste.toLocaleString()}
+
+Every Web3 leader needs to see their numbers: [YOUR_GITHUB_URL]`;
+            
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://YOUR_GITHUB_URL')}`;
+            window.open(url, '_blank');
+        }
+        
+        function sendToWebhook(data) {
+            // Using a free webhook service like webhook.site for testing
+            // Or use Zapier/Make webhook for production
+            
+            const webhookUrl = 'YOUR_WEBHOOK_URL'; // Replace with your webhook URL
+            
+            // Send data to webhook
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                mode: 'no-cors', // Important for cross-origin requests
+                body: JSON.stringify(data)
+            }).catch(err => {
+                console.log('Webhook error:', err);
+                // Don't show error to user - just log it
+            });
+            
+            // Alternative: Use Google Forms
+            // Uncomment and configure if using Google Forms
+            /*
+            const googleFormUrl = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
+            const formData = new FormData();
+            formData.append('entry.XXXXXX', data.email || '');
+            formData.append('entry.XXXXXX', data.annualBurn);
+            formData.append('entry.XXXXXX', data.activationRate);
+            // Add more fields as needed
+            
+            fetch(googleFormUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            });
+            */
+        }
+    </script>
+</body>
+</html>
