@@ -6,11 +6,8 @@
     <meta name="description" content="Find out how much money you're wasting on dead partnerships. The brutal truth about your Web3 GTM efficiency.">
     <meta property="og:title" content="GTM Reality Check - Web3 Partnership Calculator">
     <meta property="og:description" content="I just found out I'm wasting $XXX,XXX on dead partnerships. Check your GTM efficiency.">
-    <meta property="og:image" content="https://yourdomain.github.io/gtm-calculator/preview.png">
+    <meta property="og:image" content="https://arpit09881.github.io/crypto-gtm-calculator/preview.png">
     <meta name="twitter:card" content="summary_large_image">
-    
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
     <style>
         * {
@@ -139,10 +136,21 @@
             color: #9ca3af;
         }
         
+        input:invalid {
+            border-color: #ef4444;
+        }
+        
         .input-help {
             font-size: 0.85em;
             color: #6b7280;
             margin-top: 5px;
+        }
+        
+        .email-validation {
+            font-size: 0.85em;
+            color: #ef4444;
+            margin-top: 5px;
+            display: none;
         }
         
         /* Calculate button */
@@ -300,6 +308,35 @@
             color: #1a1a1a;
         }
         
+        /* Detailed insights box */
+        .insights-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .insights-box h3 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+        
+        .insight-item {
+            margin: 15px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .insight-item:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+        
         /* How we calculate */
         .calculation-explainer {
             background: #f3f4f6;
@@ -323,62 +360,6 @@
             font-size: 0.9em;
             color: #374151;
             border: 1px solid #e5e7eb;
-        }
-        
-        /* Email capture */
-        #emailCapture {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.03) 100%);
-            border: 2px solid #3b82f6;
-            border-radius: 20px;
-            padding: 40px;
-            margin-top: 60px;
-            text-align: center;
-        }
-        
-        #emailCapture h3 {
-            font-size: 1.8em;
-            margin-bottom: 15px;
-            color: #1a1a1a;
-        }
-        
-        #emailCapture p {
-            color: #6b7280;
-            margin-bottom: 25px;
-        }
-        
-        .email-form {
-            display: flex;
-            gap: 15px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        #email {
-            flex: 1;
-        }
-        
-        .email-btn {
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-        
-        .email-btn:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-        }
-        
-        .email-btn:disabled {
-            background: #6b7280;
-            cursor: not-allowed;
-            transform: none;
         }
         
         /* Share section */
@@ -407,29 +388,22 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
-        /* Success message */
-        .success-message {
-            background: #10b981;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: none;
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 0.9em;
         }
         
-        /* Loading state */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .footer a:hover {
+            text-decoration: underline;
         }
         
         /* Animations */
@@ -453,7 +427,6 @@
             h1 { font-size: 2.5em; }
             .container { padding: 20px; }
             #calculator { padding: 25px; }
-            .email-form { flex-direction: column; }
             .result-value { font-size: 1.8em; }
             .comparison-grid { grid-template-columns: 1fr; }
         }
@@ -468,13 +441,24 @@
         </div>
         
         <form id="calculator">
+            <div class="section-title">📧 Let's start with your email</div>
+            
+            <div class="question">
+                <label for="email">Your email (so you can share your results)</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" placeholder="you@protocol.xyz" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                    <div class="input-help">Don't worry, no spam. Just vibes.</div>
+                    <div class="email-validation">Please enter a valid email address</div>
+                </div>
+            </div>
+            
             <div class="section-title">👥 Team Size</div>
             
             <div class="question">
                 <label for="companyName">Company/Project Name (optional)</label>
                 <div class="input-wrapper">
                     <input type="text" id="companyName" placeholder="Acme Protocol">
-                    <div class="input-help">Helps personalize your report</div>
+                    <div class="input-help">Helps personalize your results</div>
                 </div>
             </div>
             
@@ -575,19 +559,19 @@
             </div>
             
             <div class="comparison-box">
-                <h3>📊 How You Compare</h3>
-                <p>Industry benchmarks vs. your performance</p>
+                <h3>📊 Based on My Experience</h3>
+                <p>Here's how you stack up vs what I've seen in the space</p>
                 <div class="comparison-grid">
                     <div class="comparison-item">
-                        <div class="comparison-label">Industry Avg Activation Rate</div>
-                        <div class="comparison-value">35%</div>
+                        <div class="comparison-label">Typical Activation Rate</div>
+                        <div class="comparison-value">30-40%</div>
                     </div>
                     <div class="comparison-item">
                         <div class="comparison-label">Your Activation Rate</div>
                         <div class="comparison-value" id="yourRate">0%</div>
                     </div>
                     <div class="comparison-item">
-                        <div class="comparison-label">Industry Avg Cost/Partnership</div>
+                        <div class="comparison-label">Reasonable Cost/Partnership</div>
                         <div class="comparison-value">$50K</div>
                     </div>
                     <div class="comparison-item">
@@ -597,9 +581,14 @@
                 </div>
             </div>
             
+            <div class="insights-box">
+                <h3>🎯 Your Detailed Analysis</h3>
+                <div id="detailedInsights"></div>
+            </div>
+            
             <div class="calculation-explainer">
                 <h3>🧮 How We Calculate This</h3>
-                <p>We use simple math to reveal the brutal truth about your GTM efficiency:</p>
+                <p>Simple math to reveal the brutal truth about your GTM efficiency:</p>
                 
                 <div class="formula">
                     <strong>Annual GTM Burn</strong> = (BD Team + Marketing Team) × Average Salary
@@ -618,30 +607,21 @@
                 </div>
                 
                 <p style="margin-top: 20px; color: #999;">
-                    These calculations assume your GTM team's primary focus is partnerships. 
-                    Real waste might be even higher when including events, tools, and travel.
+                    This assumes your GTM team's primary focus is partnerships. 
+                    Real waste is probably higher when including events, tools, and travel.
                 </p>
-            </div>
-            
-            <div id="emailCapture">
-                <h3>Want Your Detailed GTM Audit?</h3>
-                <p>Get a comprehensive report with benchmarks, insights, and specific recommendations</p>
-                <form class="email-form" onsubmit="captureEmail(event)">
-                    <input type="email" id="email" placeholder="your@email.com" required>
-                    <button type="submit" class="email-btn" id="emailSubmitBtn">
-                        <span id="btnText">Get Detailed Report</span>
-                        <span id="btnLoading" class="loading" style="display: none;"></span>
-                    </button>
-                </form>
-                <div id="successMessage" class="success-message">
-                    ✅ Success! Check your email for your detailed GTM audit report.
-                </div>
             </div>
             
             <div class="share-section">
                 <p style="margin-bottom: 20px; color: #999;">Share your reality check:</p>
                 <a href="#" onclick="shareTwitter()" class="share-btn">Share on Twitter</a>
                 <a href="#" onclick="shareLinkedIn()" class="share-btn">Share on LinkedIn</a>
+            </div>
+            
+            <div class="footer">
+                Built with 💀 by <a href="https://twitter.com/yourusername" target="_blank">@yourusername</a> 
+                <br>
+                Based on 5+ years of watching partnerships die in Web3
             </div>
         </div>
     </div>
@@ -650,29 +630,42 @@
         // Store results globally for sharing
         let currentResults = {};
         
-        // Initialize EmailJS with your public key
-        emailjs.init("vhLJMzd6VzA18FOUJ");
-        
         // Configuration
         const config = {
-            emailjs: {
-                serviceId: "service_pty81rg",
-                templateId: "template_ixg6wih",
-                publicKey: "vhLJMzd6VzA18FOUJ"
-            },
             webhook: {
                 url: "https://hook.eu2.make.com/ukamie7i36wy4478wxzpwm47bxfaqeim"
             },
             siteUrl: "https://arpit09881.github.io/crypto-gtm-calculator/"
         };
         
+        // Email validation
+        const emailInput = document.getElementById('email');
+        const emailValidation = document.querySelector('.email-validation');
+        
+        emailInput.addEventListener('blur', function() {
+            if (!this.validity.valid) {
+                emailValidation.style.display = 'block';
+            } else {
+                emailValidation.style.display = 'none';
+            }
+        });
+        
         document.getElementById('calculator').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Validate email
+            if (!emailInput.validity.valid) {
+                emailValidation.style.display = 'block';
+                emailInput.focus();
+                return;
+            }
+            
             calculate();
         });
         
         function calculate() {
             // Get values
+            const email = document.getElementById('email').value;
             const companyName = document.getElementById('companyName').value || 'Your company';
             const bdTeam = parseInt(document.getElementById('bdTeam').value) || 0;
             const marketingTeam = parseInt(document.getElementById('marketingTeam').value) || 0;
@@ -689,7 +682,7 @@
             const deadPartnerships = announced - live;
             const waste = Math.round((deadPartnerships / announced) * annualBurn) || 0;
             
-            // Calculate additional metrics
+            // Additional metrics
             const conversionRate = activeDiscussions > 0 ? Math.round((announced / activeDiscussions) * 100) : 0;
             const discussionToLiveRate = activeDiscussions > 0 ? Math.round((live / activeDiscussions) * 100) : 0;
             const costPerDiscussion = activeDiscussions > 0 ? Math.round(annualBurn / activeDiscussions) : 0;
@@ -697,6 +690,7 @@
             
             // Store results
             currentResults = {
+                email,
                 companyName,
                 annualBurn,
                 costPerActive,
@@ -750,7 +744,7 @@
                 warningMessage = `Each partnership is costing you $${costPerActive.toLocaleString()} - more than hiring 2 senior engineers! Your GTM is hemorrhaging money.`;
             } else if (costPerActive > 150000) {
                 warningTitle = '⚠️ MAJOR INEFFICIENCY';
-                warningMessage = `You're spending $${costPerActive.toLocaleString()} per partnership - that's 3x the industry benchmark. Time for a complete GTM overhaul.`;
+                warningMessage = `You're spending $${costPerActive.toLocaleString()} per partnership - that's 3x what I typically see. Time for a complete GTM overhaul.`;
             } else if (activationRate < 20) {
                 warningTitle = '💀 PARTNERSHIP GRAVEYARD';
                 warningMessage = `${100 - activationRate}% of your partnerships are zombies. You're running a partnership announcement factory, not a business development team.`;
@@ -758,16 +752,20 @@
                 warningTitle = '📉 FAILING EFFICIENCY';
                 warningMessage = `Over half your announced partnerships never go live. You're wasting $${waste.toLocaleString()} annually on dead deals.`;
             } else {
-                warningTitle = '✅ ROOM FOR IMPROVEMENT';
-                warningMessage = 'Your GTM efficiency is better than most, but there\'s still opportunity to optimize and reduce waste.';
+                warningTitle = '✅ NOT BAD, BUT...';
+                warningMessage = 'Your GTM efficiency is better than most, but there\'s still room to optimize and reduce waste.';
             }
             
             document.getElementById('warningTitle').textContent = warningTitle;
             document.getElementById('warningMessage').textContent = warningMessage;
             
-            // Store warning for email
+            // Store warning for data
             currentResults.warningTitle = warningTitle;
             currentResults.warningMessage = warningMessage;
+            
+            // Generate and display detailed insights
+            const insights = generateDetailedInsights(currentResults);
+            document.getElementById('detailedInsights').innerHTML = insights;
             
             // Show results
             document.getElementById('calculator').style.display = 'none';
@@ -780,151 +778,64 @@
             sendToWebhook(currentResults);
         }
         
-        async function captureEmail(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const submitBtn = document.getElementById('emailSubmitBtn');
-            const btnText = document.getElementById('btnText');
-            const btnLoading = document.getElementById('btnLoading');
-            
-            if (email) {
-                // Show loading state
-                submitBtn.disabled = true;
-                btnText.style.display = 'none';
-                btnLoading.style.display = 'inline-block';
-                
-                // Add email to results
-                currentResults.email = email;
-                
-                // Generate insights
-                const detailedInsights = generateDetailedInsights(currentResults);
-                
-                try {
-                    // Send email using EmailJS
-                    const emailParams = {
-                        to_email: email,
-                        company_name: currentResults.companyName,
-                        annual_burn: '$' + currentResults.annualBurn.toLocaleString(),
-                        activation_rate: currentResults.activationRate + '%',
-                        cost_per_partnership: currentResults.costPerActive > 0 ? '$' + currentResults.costPerActive.toLocaleString() : 'N/A',
-                        annual_waste: '$' + currentResults.waste.toLocaleString(),
-                        total_team_size: currentResults.totalTeam,
-                        bd_team_size: currentResults.bdTeam,
-                        marketing_team_size: currentResults.marketingTeam,
-                        avg_salary: '$' + currentResults.avgSalary.toLocaleString(),
-                        active_discussions: currentResults.activeDiscussions,
-                        partnerships_announced: currentResults.announced,
-                        partnerships_live: currentResults.live,
-                        dead_partnerships: currentResults.deadPartnerships,
-                        conversion_rate: currentResults.conversionRate + '%',
-                        discussion_to_live_rate: currentResults.discussionToLiveRate + '%',
-                        cost_per_discussion: '$' + currentResults.costPerDiscussion.toLocaleString(),
-                        time_wasted_hours: currentResults.avgTimeWasted.toLocaleString(),
-                        warning_title: currentResults.warningTitle,
-                        warning_message: currentResults.warningMessage,
-                        detailed_insights: detailedInsights,
-                        calculator_url: config.siteUrl,
-                        date: new Date().toLocaleDateString()
-                    };
-                    
-                    await emailjs.send(
-                        config.emailjs.serviceId,
-                        config.emailjs.templateId,
-                        emailParams
-                    );
-                    
-                    // Send complete data with email to webhook
-                    sendToWebhook(currentResults);
-                    
-                    // Show success
-                    document.getElementById('successMessage').style.display = 'block';
-                    document.querySelector('.email-form').style.display = 'none';
-                    
-                    setTimeout(() => {
-                        document.getElementById('emailCapture').innerHTML = `
-                            <h3>✅ Report Sent!</h3>
-                            <p>Check ${email} for your detailed GTM efficiency audit.</p>
-                            <p style="margin-top: 20px; color: #666;">
-                                Your report includes:
-                                <br>• Detailed efficiency breakdown
-                                <br>• Comparison to industry benchmarks
-                                <br>• Specific recommendations for improvement
-                                <br>• Hidden costs you're probably missing
-                            </p>
-                        `;
-                    }, 2000);
-                    
-                } catch (error) {
-                    console.error('Email error:', error);
-                    document.getElementById('successMessage').style.display = 'block';
-                    document.getElementById('successMessage').textContent = '✅ Thanks! Check your email shortly.';
-                    document.querySelector('.email-form').style.display = 'none';
-                    
-                    // Still send to webhook even if email fails
-                    sendToWebhook({
-                        ...currentResults,
-                        emailError: true
-                    });
-                } finally {
-                    // Reset button state
-                    submitBtn.disabled = false;
-                    btnText.style.display = 'inline';
-                    btnLoading.style.display = 'none';
-                }
-            }
-        }
-        
         function generateDetailedInsights(data) {
             let insights = [];
             
+            // Core insights
             if (data.activationRate < 10) {
-                insights.push("🚨 CRITICAL: Less than 10% of your partnerships go live. You're essentially running a PR department, not a BD team.");
+                insights.push("Less than 10% of your partnerships go live. You're basically running a PR department, not a BD team.");
             } else if (data.activationRate < 35) {
-                insights.push("⚠️ Your activation rate is below industry average. Focus on quality over quantity.");
+                insights.push("Your activation rate is below what I typically see (35%). Time to focus on quality over quantity.");
             }
             
             if (data.costPerActive > 200000) {
-                insights.push(`💸 At $${data.costPerActive.toLocaleString()} per active partnership, you could hire ${Math.floor(data.costPerActive / 100000)} additional engineers instead.`);
+                insights.push(`At $${data.costPerActive.toLocaleString()} per active partnership, you could hire ${Math.floor(data.costPerActive / 100000)} additional engineers instead.`);
             }
             
             if (data.avgTimeWasted > 1000) {
-                insights.push(`⏰ Your team is wasting approximately ${data.avgTimeWasted.toLocaleString()} hours annually on partnerships that never materialize.`);
+                insights.push(`Your team is wasting ~${data.avgTimeWasted.toLocaleString()} hours annually on partnerships that never materialize.`);
             }
             
             if (data.bdTeam > data.marketingTeam * 2) {
-                insights.push("👥 Your BD team is disproportionately large compared to marketing. Consider rebalancing.");
+                insights.push("Your BD team is huge compared to marketing. Maybe rebalance?");
             }
             
             if (data.conversionRate < 25) {
-                insights.push(`📉 Only ${data.conversionRate}% of discussions lead to announcements. Improve your qualification process.`);
+                insights.push(`Only ${data.conversionRate}% of discussions → announcements. You need better qualification.`);
             }
             
-            insights.push("\n📋 RECOMMENDATIONS:");
+            // Conversion funnel insight
+            insights.push(`<strong>Your funnel:</strong> ${data.activeDiscussions} discussions → ${data.announced} announced (${data.conversionRate}%) → ${data.live} live (${data.activationRate}%)`);
             
+            // Time to money calculation
+            const monthlyBurn = Math.round(data.annualBurn / 12);
+            const daysOfBurnPerPartnership = data.costPerActive > 0 ? Math.round(data.costPerActive / (data.annualBurn / 365)) : 0;
+            if (daysOfBurnPerPartnership > 0) {
+                insights.push(`Each active partnership costs ${daysOfBurnPerPartnership} days of your total GTM burn.`);
+            }
+            
+            // What else you're probably missing
+            insights.push("<strong>Hidden costs not in this calc:</strong>");
+            insights.push("• Event sponsorships & conferences (easily $100K+/year)");
+            insights.push("• Tools, CRM, analytics ($20-50K/year)");
+            insights.push("• Travel & entertainment ($50K+/year)");
+            insights.push("• Engineering time on failed integrations (priceless)");
+            
+            // Quick recommendations
             if (data.activationRate < 50) {
-                insights.push("1. Implement a partnership scoring system to prioritize high-value opportunities");
-                insights.push("2. Set up integration milestones with deadlines before announcing");
-                insights.push("3. Allocate dedicated technical resources for integration support");
+                insights.push("<strong>My quick take:</strong>");
+                insights.push("• Stop announcing partnerships before integration");
+                insights.push("• Create a scoring system - not all partnerships are equal");
+                insights.push("• Get engineering involved BEFORE the handshake emoji");
             }
             
-            if (data.costPerActive > 100000) {
-                insights.push("4. Consider a smaller, more focused BD team");
-                insights.push("5. Automate partnership onboarding and tracking processes");
-            }
-            
-            insights.push("\n💡 HIDDEN COSTS NOT INCLUDED IN THIS CALCULATION:");
-            insights.push("• Event sponsorships and conference costs ($50-500K/year)");
-            insights.push("• Partnership tools and CRM systems ($20-50K/year)");
-            insights.push("• Travel and entertainment ($30-100K/year)");
-            insights.push("• Opportunity cost of engineering time on failed integrations");
-            
-            return insights.join('\n');
+            return insights.map(insight => `<div class="insight-item">${insight}</div>`).join('');
         }
         
         function shareTwitter() {
             const text = `Just discovered I'm wasting $${currentResults.waste.toLocaleString()} annually on dead partnerships. 
-            
-My GTM efficiency score: ${currentResults.activationRate}%
+
+My GTM efficiency: ${currentResults.activationRate}%
 Cost per ACTIVE partnership: $${currentResults.costPerActive.toLocaleString()}
 
 Check your GTM reality: ${config.siteUrl}`;
@@ -935,29 +846,30 @@ Check your GTM reality: ${config.siteUrl}`;
         
         function shareLinkedIn() {
             const text = `Eye-opening GTM Reality Check:
-            
+
 Annual GTM Burn: $${currentResults.annualBurn.toLocaleString()}
 Partnership Activation Rate: ${currentResults.activationRate}%
 Annual Waste: $${currentResults.waste.toLocaleString()}
 
-Every Web3 leader needs to see their numbers: ${config.siteUrl}`;
+Time to face the truth: ${config.siteUrl}`;
             
             const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(config.siteUrl)}`;
             window.open(url, '_blank');
         }
         
         function sendToWebhook(data) {
-            if (!config.webhook.url || config.webhook.url === 'YOUR_MAKE_WEBHOOK_URL') {
-                console.log('Webhook not configured. Data:', data);
-                return;
-            }
+            // Log what we're sending
+            console.log('Sending to webhook:', data);
             
             fetch(config.webhook.url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                mode: 'no-cors',
                 body: JSON.stringify(data)
+            }).then(() => {
+                console.log('Data sent to sheet successfully');
             }).catch(err => {
                 console.log('Webhook error:', err);
             });
