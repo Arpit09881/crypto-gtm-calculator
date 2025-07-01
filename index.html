@@ -860,19 +860,63 @@ Time to face the truth: ${config.siteUrl}`;
         function sendToWebhook(data) {
             // Log what we're sending
             console.log('Sending to webhook:', data);
+            console.log('Webhook URL:', config.webhook.url);
             
+            // Simplify the data structure for Make.com
+            const webhookData = {
+                timestamp: new Date().toISOString(),
+                email: data.email || '',
+                companyName: data.companyName || '',
+                annualBurn: data.annualBurn || 0,
+                costPerActive: data.costPerActive || 0,
+                activationRate: data.activationRate || 0,
+                annualWaste: data.waste || 0,
+                bdTeamSize: data.bdTeam || 0,
+                marketingTeamSize: data.marketingTeam || 0,
+                totalTeamSize: data.totalTeam || 0,
+                avgSalary: data.avgSalary || 0,
+                activeDiscussions: data.activeDiscussions || 0,
+                partnershipsAnnounced: data.announced || 0,
+                partnershipsLive: data.live || 0,
+                deadPartnerships: data.deadPartnerships || 0,
+                conversionRate: data.conversionRate || 0,
+                discussionToLiveRate: data.discussionToLiveRate || 0,
+                warningTitle: data.warningTitle || '',
+                referrer: data.referrer || 'Direct'
+            };
+            
+            // Send the simplified data
             fetch(config.webhook.url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 mode: 'no-cors',
-                body: JSON.stringify(data)
+                body: JSON.stringify(webhookData)
             }).then(() => {
-                console.log('Data sent to sheet successfully');
+                console.log('Webhook request sent successfully');
+                console.log('Data sent:', webhookData);
             }).catch(err => {
-                console.log('Webhook error:', err);
+                console.error('Webhook error:', err);
             });
+            
+            // Also try sending as form data as backup
+            setTimeout(() => {
+                const formData = new FormData();
+                Object.keys(webhookData).forEach(key => {
+                    formData.append(key, webhookData[key]);
+                });
+                
+                fetch(config.webhook.url, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                }).then(() => {
+                    console.log('Backup form data sent');
+                }).catch(err => {
+                    console.log('Form data error:', err);
+                });
+            }, 1000);
         }
     </script>
 </body>
