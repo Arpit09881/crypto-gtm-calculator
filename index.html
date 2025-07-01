@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GTM Reality Check - How Much is Your Web3 GTM Really Costing?</title>
+    <title>The Real Cost of Crypto Partnerships - Calculator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Find out how much money you're wasting on dead partnerships. The brutal truth about your Web3 GTM efficiency.">
-    <meta property="og:title" content="GTM Reality Check - Web3 Partnership Calculator">
-    <meta property="og:description" content="I just found out I'm wasting $XXX,XXX on dead partnerships. Check your GTM efficiency.">
+    <meta name="description" content="Find out how much money you're wasting on dead partnerships. Calculate the real cost of your Web3 partnership strategy.">
+    <meta property="og:title" content="The Real Cost of Crypto Partnerships">
+    <meta property="og:description" content="I just found out I'm wasting $XXX,XXX on dead partnerships. Check your partnership efficiency.">
     <meta property="og:image" content="https://arpit09881.github.io/crypto-gtm-calculator/preview.png">
     <meta name="twitter:card" content="summary_large_image">
     
@@ -435,8 +435,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>GTM Reality Check</h1>
-            <p class="subtitle">How much is your Web3 GTM really costing you?</p>
+            <h1>The Real Cost of Crypto Partnerships</h1>
+            <p class="subtitle">Find out how much you're wasting on dead partnerships</p>
             <p class="warning-text">⚠️ Warning: Results might hurt</p>
         </div>
         
@@ -519,7 +519,7 @@
         
         <div id="results">
             <div class="results-header">
-                <h2 class="results-title">💀 Your GTM Reality</h2>
+                <h2 class="results-title">💀 Your Partnership Reality</h2>
                 <p>Brace yourself for the truth about your partnership efficiency</p>
             </div>
             
@@ -860,63 +860,57 @@ Time to face the truth: ${config.siteUrl}`;
         function sendToWebhook(data) {
             // Log what we're sending
             console.log('Sending to webhook:', data);
-            console.log('Webhook URL:', config.webhook.url);
             
-            // Simplify the data structure for Make.com
+            // Create clean data object with exact field names
             const webhookData = {
                 timestamp: new Date().toISOString(),
-                email: data.email || '',
-                companyName: data.companyName || '',
-                annualBurn: data.annualBurn || 0,
-                costPerActive: data.costPerActive || 0,
-                activationRate: data.activationRate || 0,
-                annualWaste: data.waste || 0,
-                bdTeamSize: data.bdTeam || 0,
-                marketingTeamSize: data.marketingTeam || 0,
-                totalTeamSize: data.totalTeam || 0,
-                avgSalary: data.avgSalary || 0,
-                activeDiscussions: data.activeDiscussions || 0,
-                partnershipsAnnounced: data.announced || 0,
-                partnershipsLive: data.live || 0,
-                deadPartnerships: data.deadPartnerships || 0,
-                conversionRate: data.conversionRate || 0,
-                discussionToLiveRate: data.discussionToLiveRate || 0,
-                warningTitle: data.warningTitle || '',
-                referrer: data.referrer || 'Direct'
+                email: String(data.email || ''),
+                companyName: String(data.companyName || ''),
+                annualBurn: String(data.annualBurn || 0),
+                costPerActive: String(data.costPerActive || 0),
+                activationRate: String(data.activationRate || 0),
+                annualWaste: String(data.waste || 0),
+                bdTeamSize: String(data.bdTeam || 0),
+                marketingTeamSize: String(data.marketingTeam || 0),
+                totalTeamSize: String(data.totalTeam || 0),
+                avgSalary: String(data.avgSalary || 0),
+                activeDiscussions: String(data.activeDiscussions || 0),
+                partnershipsAnnounced: String(data.announced || 0),
+                partnershipsLive: String(data.live || 0),
+                deadPartnerships: String(data.deadPartnerships || 0),
+                conversionRate: String(data.conversionRate || 0),
+                discussionToLiveRate: String(data.discussionToLiveRate || 0),
+                warningTitle: String(data.warningTitle || ''),
+                referrer: String(data.referrer || 'Direct')
             };
             
-            // Send the simplified data
+            console.log('Formatted webhook data:', webhookData);
+            
+            // Send as JSON with proper headers
             fetch(config.webhook.url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                mode: 'no-cors',
                 body: JSON.stringify(webhookData)
-            }).then(() => {
-                console.log('Webhook request sent successfully');
-                console.log('Data sent:', webhookData);
+            }).then(response => {
+                console.log('Webhook sent successfully');
             }).catch(err => {
                 console.error('Webhook error:', err);
-            });
-            
-            // Also try sending as form data as backup
-            setTimeout(() => {
-                const formData = new FormData();
-                Object.keys(webhookData).forEach(key => {
-                    formData.append(key, webhookData[key]);
-                });
                 
+                // Try without no-cors as fallback
                 fetch(config.webhook.url, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(webhookData)
                 }).then(() => {
-                    console.log('Backup form data sent');
-                }).catch(err => {
-                    console.log('Form data error:', err);
+                    console.log('Fallback webhook sent');
                 });
-            }, 1000);
+            });
         }
     </script>
 </body>
